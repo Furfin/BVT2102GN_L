@@ -1,8 +1,5 @@
-public class Point3d {
-        /** координата X **/
-        private double xCoord;
-        /** координата Y **/
-        private double yCoord;
+public class Point3d extends Point2d {
+
         /** координата Z **/
         private double zCoord;
     
@@ -18,33 +15,13 @@ public class Point3d {
             //Вызывает конструктор и передаёт ему два значения
             this(0, 0, 0);
         }
-    
-        /** Возвращает координату X **/
-        public double getX () {
-            return xCoord;
-        }
-    
-        /** Возвращает координату Y **/
-        public double getY () {
-            return yCoord;
-        }
 
         /** Возвращает координату Z **/
         public double getZ () {
             return zCoord;
         }
-    
-        /** Установка занчения координаты X. **/
-        public void setX ( double val) {
-        xCoord = val;
-        }
-    
-        /** Установка занчения координаты Y. **/
-        public void setY ( double val) {
-        yCoord = val;
-        }
-
-        /** Установка занчения координаты Z. **/
+        
+        /** Установка знaчения координаты Z. **/
         public void setZ ( double val) {
             zCoord = val;
         }

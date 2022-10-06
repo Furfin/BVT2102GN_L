@@ -26,6 +26,7 @@ public class Lab1 {
         z = input.nextDouble();
         Point3d thirdPoint = new Point3d(x,y,z);
         
+        input.close();
         // если есть хотя бы две одинаковые точки не считать площадь
         if (fisrtPoint.objectComp(secondPoint) || fisrtPoint.objectComp(thirdPoint) || secondPoint.objectComp(thirdPoint)) {
             System.out.println("Unable to calculate area");
