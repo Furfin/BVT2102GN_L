@@ -35,7 +35,6 @@ public class Practice2 {
         for(int i = 0; i< nums.length;i++) { 
             sum+= nums[i];
         }
-
         return sum%nums.length == 0;
     }
 
@@ -66,7 +65,6 @@ public class Practice2 {
                 point = true;
             }
         }
-
         return dP;
     }
 
