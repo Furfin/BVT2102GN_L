@@ -1,7 +1,6 @@
 
 
-public class Practice3 {
-
+public class Practice3 { 
     public static void main(String args[]) {
         int[] arr1 = {1,3,4,4,4,4,4,4,4,4};
         int[] arr2 = {2,5,7};
@@ -15,7 +14,6 @@ public class Practice3 {
         System.out.println(longestZero("00010"));
         System.out.println(nextPrime(30));
         System.out.println(rightTringle(105, 100, 145));
-
     }
 
     public static int solutions(double a, double b, double c) {
@@ -35,7 +33,7 @@ public class Practice3 {
 
     public static boolean checkPerfect(int num) {
         int sum = 1;
-        for(int i = 2; i<=num/2; i++) {
+        for ( int i = 2; i<=num/2; i++) {
             if(num%i == 0) {
                 sum+=i;
             }
@@ -82,7 +80,7 @@ public class Practice3 {
         int zero_counter = 0;
         int max_count = 0;
         for ( int i = 0; i < str.length(); i++ ) {
-            if(str.charAt(i) != '0' ) {
+            if ( str.charAt(i) != '0' ) {
                 if ( max_count < zero_counter ) {
                     max_count = zero_counter;
                 }
@@ -95,7 +93,7 @@ public class Practice3 {
     }
 
     public static boolean isPrime(int num) {
-        for (int i = 2; i<=num/2;i++){
+        for ( int i = 2; i<=num/2;i++ ) {
             if ( num%i == 0 ) {
                 return false;
             }
@@ -112,7 +110,7 @@ public class Practice3 {
     }
 
     public static boolean rightTringle(int a, int b, int c) {
-        if ( a > b && a > c) {
+        if ( a > b && a > c ) {
             return a*a == b*b + c*c;
         } else if ( b > a && b > c ) {
             return b*b == a*a + c*c;
