@@ -1,4 +1,4 @@
-import java.security.Principal;
+
 import java.util.*; 
 
 class Practice4 {
@@ -6,10 +6,10 @@ class Practice4 {
 
     public static void main(String args[]) {
         double arr[] = {13.25, 15, 30, 1.5};
-        //Bessy(); // 10,7 hello my name is Bessie and this is my essay
+        Bessy("10,7 hello my name is Bessie and this is my essay"); // 10,7 hello my name is Bessie and this is my essay
         System.out.println(split("((()))(())()()(()())"));
         System.out.println(toCamelCase("abcd_efg_ahahha_not_a_word"));
-        System.out.println(toSnakeCase("abcdEfGhAHHAHAHhahahh"));
+        System.out.println(toSnakeCase("abcdEfGhAHHAHAHhahahH"));
         overTime(arr);
         BMI("205 pounds", "73 inches");
         System.out.println(bugger(39));
@@ -17,18 +17,16 @@ class Practice4 {
         System.out.println(doesRhyme("Sam I am!", "Green eggs and HAM."));
         System.out.println(trouble(451999277L, 41177722899L));
         System.out.println(countUnique("AZYWABBCATTTA", 'A'));
-
     }
 
-    public static void Bessy() {
-        Scanner scan = new Scanner(System.in);
+    public static void Bessy(String str) {
+        Scanner scan = new Scanner(str);
         scan.useDelimiter(",|\\n| ");
         int n = scan.nextInt();
         int k = scan.nextInt();
         String word = scan.next();
         int currentLen = word.length();
         System.out.print(word);
-        
         while( n > 1 ) {
             word = scan.next();
             if ( currentLen+word.length() <= k ) {

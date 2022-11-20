@@ -1,5 +1,6 @@
 
 
+
 public class Practice3 { 
     public static void main(String args[]) {
         int[] arr1 = {1,3,4,4,4,4,4,4,4,4};
