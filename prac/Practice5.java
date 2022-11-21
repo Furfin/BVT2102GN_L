@@ -71,6 +71,7 @@ public class Practice5 {
             return (Math.abs(y1-y2) == 1) || (Math.abs(x1-x2) == 1);
         } else {
             return false;
+        
         }
     }
 
