@@ -1,8 +1,11 @@
 import java.awt.geom.Rectangle2D;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.image.*;
 import java.awt.event.*;
 import java.io.File;
@@ -13,6 +16,8 @@ public class FractalExplorer {
     private JImageDisplay image;
     private Rectangle2D.Double range;
     private FractalGenerator fractal;
+    private int rowsRemaining;
+    JFrame frame;
 
     public static void main(String[] args) {
         FractalExplorer fractalE = new FractalExplorer(800);
@@ -26,10 +31,11 @@ public class FractalExplorer {
         this.image = new JImageDisplay(size, size);
         this.range = new Rectangle2D.Double();
         this.fractal = new Mandelbrot();
+        this.rowsRemaining = 0;
+        this.frame = new JFrame("Fractal Generator");
     }
 
     public void createAndShowGUI() {
-        JFrame frame = new JFrame("Fractal Generator");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(this.size, this.size);
         frame.getContentPane().add(BorderLayout.CENTER, this.image);
@@ -47,7 +53,6 @@ public class FractalExplorer {
         comboBox.addActionListener(new comboButtonListener());
 
         JPanel header = new JPanel();
-        header.add(saveButton);
         JLabel fractalsLabel = new JLabel("fractal:");
         saveButton.addActionListener(new saveButtonListener());
         header.add(fractalsLabel, BorderLayout.WEST);
@@ -56,30 +61,29 @@ public class FractalExplorer {
         frame.add(header, BorderLayout.NORTH);
         resetButton.setPreferredSize(new Dimension(150, 30));
         resetButton.addActionListener(new resetButtonListener());
-        frame.getContentPane().add(BorderLayout.SOUTH, resetButton);
+        JPanel bottom = new JPanel();
+
+        bottom.add(resetButton, BorderLayout.EAST);
+        bottom.add(saveButton, BorderLayout.WEST);
+        frame.add(bottom, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
         frame.setResizable(false);
     }
 
+    private void enableUI(boolean val) {
+        this.frame.setEnabled(val);
+    }
+
     private void drawFractal() {
         this.image.clearImage();
-        for (int x = 0; x < this.size; x++) {
-            for (int y = 0; y < this.size; y++) {
-                double xCoord = FractalGenerator.getCoord(range.x, range.x + range.width, size, x);
-                double yCoord = FractalGenerator.getCoord(range.y, range.y + range.height, size, y);
-                int iterations = fractal.numIterations(xCoord, yCoord);
-                int rgbColor;
-                if (iterations != -1) {
-                    float hue = 0.7f + (float) iterations / 200f;
-                    rgbColor = Color.HSBtoRGB(hue, 1f, 1f);
-                } else {
-                    rgbColor = Color.HSBtoRGB(0, 0, 0);
-                }
-                image.drawPixel(x, y, rgbColor);
-            }
+        this.enableUI(false);
+        this.rowsRemaining = this.size;    
+        for (int y = 0; y < this.size; y++) {
+            FractalWorker lineWorker = new FractalWorker(y);
+            lineWorker.execute();
         }
-        image.repaint();
+        
     }
 
     private class resetButtonListener implements ActionListener {
@@ -129,24 +133,64 @@ public class FractalExplorer {
 
     private class saveButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
+            JFileChooser chooser = new JFileChooser();
+            FileFilter filter = new FileNameExtensionFilter("PNG Images", "png");
+            chooser.setFileFilter(filter);
+            chooser.setAcceptAllFileFilterUsed(false);
+            int saveImg = chooser.showSaveDialog(image);
 
-        JFileChooser myFileChooser = new JFileChooser();
-        myFileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
-        myFileChooser.setAcceptAllFileFilterUsed(false);
-        int userSelection = myFileChooser.showSaveDialog(image);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File file = myFileChooser.getSelectedFile();
-            try {
-                BufferedImage displayImage = image.getImage();
-                ImageIO.write(displayImage, "png", file);
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(image,
-                        exception.getMessage(), "Cannot Save Image",
-                        JOptionPane.ERROR_MESSAGE);
+            if (saveImg == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                try {
+                    ImageIO.write(image.getImage(), "png", file);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(image,
+                            e.getMessage(), "Cannot Save Image",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
-    }
 
     }
+    
+    private class FractalWorker extends SwingWorker<Object, Object> {
+        int y_line;
+        List<Integer> line = new ArrayList<Integer>();
+
+        public FractalWorker(int y) {
+            this.y_line = y;
+        }
+
+        @Override
+        protected Object doInBackground() {
+            for (int x = 0; x < FractalExplorer.this.size; x++) {
+                double xCoord = FractalGenerator.getCoord(range.x, range.x + range.width, size, x);
+                double yCoord = FractalGenerator.getCoord(range.y, range.y + range.height, size, this.y_line);
+                int iterations = fractal.numIterations(xCoord, yCoord);
+                int rgbColor;
+                if (iterations != -1) {
+                    float hue = 0.7f + (float) iterations / 200f;
+                    rgbColor = Color.HSBtoRGB(hue, 1f, 1f);
+                } else {
+                    rgbColor = Color.HSBtoRGB(0, 0, 0);
+                }
+                this.line.add(rgbColor);
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            for (int x = 0; x < FractalExplorer.this.size; x++) {
+                FractalExplorer.this.image.drawPixel(x, y_line, line.get(x));
+            }
+            FractalExplorer.this.image.repaint(0,0,this.y_line,FractalExplorer.this.size, 1);
+            FractalExplorer.this.rowsRemaining -= 1;
+            if ( FractalExplorer.this.rowsRemaining == 0 ) {
+                FractalExplorer.this.enableUI(true);
+            }
+            super.done();
+        }
+    }
 }
+
