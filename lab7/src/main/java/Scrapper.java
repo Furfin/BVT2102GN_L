@@ -31,10 +31,10 @@ public class Scrapper implements Runnable {
     @Override
     public void run() {
         while ( depth <= maxDepth ) {
-            if ( pool.size() > 0 ) {
+            if ( pool.size() > 0 || pool.threadsRun.size() > 0 ) {
                 try {
-                    ArrayList<Address> adresses = new ArrayList<Address>();
                     Address adr = pool.getAddress();
+                    pool.threadsRun.add(1);
                     this.adr = adr;
                     depth++;
                     this.client = new Socket(this.adr.get_url().getHost(),80);
@@ -42,22 +42,26 @@ public class Scrapper implements Runnable {
                     for ( int j = 0; j < URLs.size(); j++ ) {
                         try {
                             Address adrs = new Address(this.depth, URLs.get(j));
-                            if ( depth <= maxDepth ) {
+                            if ( depth <= maxDepth && pool.processed(adrs) ) {
                                 System.out.println("Added "+adrs.get_url().toString() + " at "+String.valueOf(this.tId) );
                                 pool.addAddress(adrs);
                             }
                         } catch (MalformedURLException e) {
                         }
                     }
+                    pool.threadsRun.remove(1);
                 } catch (UnknownHostException e) {
                     System.out.println("Invalid hostname " + this.adr.get_url().getHost());
                 } catch (IOException e) {
-                    System.out.println("Something went wrong... With IO!");
+                    //System.out.println("Something went wrong... With IO!");
                 } catch ( Exception e) {
-
                 }
+               
+            } else {
+                break;
             }
-        } 
+        }
+        System.out.println(pool.size());
     }
 
     public void loadHTML() throws UnknownHostException, IOException {

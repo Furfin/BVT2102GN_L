@@ -8,8 +8,8 @@ import java.util.concurrent.*;
 
 public class URLpool {
     private ConcurrentLinkedQueue<Address> addressList;
-    private ArrayList<Address> processedList = new ArrayList<Address>();
-    public int endflag = 0;
+    public ConcurrentLinkedQueue<Address> processedList = new ConcurrentLinkedQueue<Address>();
+    public  ConcurrentLinkedQueue<Integer> threadsRun = new ConcurrentLinkedQueue<Integer>();
 
     public int size() {
         return addressList.size();
@@ -17,6 +17,7 @@ public class URLpool {
 
     public URLpool( Address adr) {
         this.addressList = new ConcurrentLinkedQueue<Address>();
+        this.processedList.add(adr);
         this.addressList.add(adr);
     }
 
@@ -28,5 +29,20 @@ public class URLpool {
 
     public void addAddress(Address adr) {
         this.addressList.add(adr);
+    }
+
+    public boolean processed(Address adr) {
+        boolean status = true;
+        for( Address address: processedList ) {
+            if (address.get_url().getHost().equals(adr.get_url().getHost()) && address.get_url().getPath().equals(adr.get_url().getPath())) {
+                status = false;
+            }
+        }
+        for( Address address: addressList ) {
+            if (address.get_url().getHost().equals(adr.get_url().getHost()) && address.get_url().getPath().equals(adr.get_url().getPath())) {
+                status = false;
+            }
+        }
+        return status;
     }
 }
