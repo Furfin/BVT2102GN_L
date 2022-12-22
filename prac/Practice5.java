@@ -40,13 +40,13 @@ public class Practice5 {
     }
     
     public static String decrypt(int[] arr) {
-        String answ = ""+(char)arr[0];
+        StringBuilder answ = new StringBuilder(arr[0]);
         int prev = arr[0];
         for( int i = 1; i < arr.length; i++ ) {
             prev = arr[i] + prev;
-            answ = answ+(char)prev;
+            answ = answ.append((char)prev);
         }
-        return answ;
+        return answ.toString();
     }
 
     public static boolean canMove(String f, String start, String finish) {
@@ -85,8 +85,8 @@ public class Practice5 {
     }
 
     public static int bugger(int num) {
-        String str = String.valueOf(num);
-        Scanner scan = new Scanner(str).useDelimiter("");
+        StringBuilder str = new StringBuilder(String.valueOf(num));
+        Scanner scan = new Scanner(str.toString()).useDelimiter("");
         int iters = 0;
         int curr_num = 1;
 
@@ -100,8 +100,8 @@ public class Practice5 {
             } else {
                 num = curr_num;
                 curr_num = 1;
-                str = String.valueOf(num);
-                scan = new Scanner(str).useDelimiter("");
+                str = new StringBuilder(String.valueOf(num));
+                scan = new Scanner(str.toString()).useDelimiter("");
             }
         }
         return curr_num;
@@ -277,18 +277,22 @@ public class Practice5 {
     public static String correctTitle(String str) {
         Scanner scan = new Scanner(str);
         String word;
-        String answ = "";
+        StringBuilder answ = new StringBuilder();
         List<String> exceptions = List.of("and", "the", "of", "in");
         scan.useDelimiter(" ");
         while( scan.hasNext() ) {
             word = scan.next();
             if ( exceptions.contains(word.toLowerCase()) ) {
-                answ += word.toLowerCase() + " ";
+                answ.append(word.toLowerCase());
+                answ.append(" ");
             } else {
-                answ += word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase() + " ";
+                answ.append(word.substring(0, 1).toUpperCase());
+
+                answ.append(word.substring(1).toLowerCase());
+                answ.append(" ");
             }
         }
-        return answ;
+        return answ.toString();
     }
 
     public static void hexLattice(int num) {
