@@ -1,0 +1,28 @@
+#include "s21_shunting_yard.h"
+//! @brief End of program status flag
+int status = 0;
+//! @brief End of program function expression flag
+int x_flag = 0;
+enum { ASSOC_NONE = 0, ASSOC_LEFT, ASSOC_RIGHT };
+
+/**
+ * Struct that represents operations. Can be used to apply said operations to
+ * arguments.
+ *
+ *
+ * @param op Character representation of operation
+ * @param prec Represents hierarchy of operations
+ * @param assoc Used when parsing operations and changes how operation is
+ * applied on arguments
+ * @param unary 0 or 1. Represents unary operations
+ * @param eval Stores eval function of operator
+ *
+ */
+struct operator_type {
+  char op;
+  int prec;
+  int assoc;
+  int unary;
+  double (*eval)(double a1, double a2);
+};
+

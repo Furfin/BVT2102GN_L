@@ -61,6 +61,7 @@ def setup():
 
 def drop_all():
     engine = create_engine(DATABASE_URI)
+    Base.metadata.drop_all(engine, tables=[UserPaper])
     Base.metadata.drop_all(engine)
 
 def create_user(username,hashed_password,session):

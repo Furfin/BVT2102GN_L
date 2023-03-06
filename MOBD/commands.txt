@@ -150,3 +150,30 @@ VALUES(5, 5);
 
 INSERT into UserPaper(UserId, PaperId)
 VALUES(5, 1);
+
+
+
+CREATE FUNCTION on_delete_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+	as
+	$$
+	DECLARE _id_to_delete int;
+	begin
+		_id_to_delete = OLD.id;
+		DELETE FROM userpaper WHERE userpaper.userid=_id_to_delete;
+		DELETE FROM comments WHERE comments.user_id=_id_to_delete;
+		DELETE FROM ratings WHERE ratings.user_id=_id_to_delete;
+		DELETE FROM users WHERE users.id=_id_to_delete;
+		RETURN NULL;
+	end;
+	$$;
+
+CREATE OR REPLACE TRIGGER check_update
+    BEFORE DELETE on users
+    FOR EACH ROW
+	WHEN (pg_trigger_depth() = 0)
+    EXECUTE FUNCTION on_delete_trigger();
+	
+DELETE FROM users WHERE users.id = 3;
+
+SELECT * FROM users;
